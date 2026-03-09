@@ -4,13 +4,9 @@
 
 **Code of Caribbean** was a multi-round technical treasure hunt and coding challenge that tested logical reasoning, problem-solving ability, and strategic thinking. Our team successfully progressed through all rounds and secured **Second Prize** in the competition.
 
----
-
 ## Competition Structure
 
 The event consisted of **three rounds followed by a final treasure hunt challenge**.
-
----
 
 ## Round 1 — Map Clue Challenge
 
@@ -28,8 +24,6 @@ The first round required participants to analyze a treasure map and identify hid
 
 Our team successfully deciphered the clues and obtained the required code.
 
----
-
 ## Round 2 — HackerRank Coding Challenge
 
 The second round consisted of **two algorithmic programming problems hosted on HackerRank**.
@@ -46,7 +40,6 @@ The second round consisted of **two algorithmic programming problems hosted on H
 
 Both problems were solved successfully, allowing our team to advance to the next stage.
 
----
 
 ## Round 3 — Warship Battle Game
 
@@ -64,7 +57,6 @@ Our team destroyed **all the warships in the very first shot**, completing the r
 - Observation skills
 - Quick decision-making
 
----
 
 ## Final Treasure Hunt
 
@@ -72,15 +64,14 @@ The final challenge required teams to **decipher the ultimate clue** to locate t
 
 The winner was determined by **the team that solved the final clue first and identified the correct location**.
 
----
 
 ## Achievement
 
 Our team successfully completed all stages of the event and secured **Second Prize** in the competition.
 
----
 
 ## Team Members
 
-- Sarvan Kumar  
+- Sarvan Kumar (@sarvan-2187)
 - Rohith Subramanian Nithyadevi
+

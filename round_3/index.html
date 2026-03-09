@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Phase III: Cursed Waters</title>
+    <style>
+        :root {
+            --parchment: #f4e4bc;
+            --ink: #2c1a0b;
+            --blood: #8b0000;
+            --sea: #006994;
+        }
+
+        body {
+            background-color: #1a120b;
+            background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Papyrus', 'Georgia', serif;
+            color: var(--ink);
+        }
+
+        .container {
+            max-width: 900px;
+            width: 95%;
+            background: var(--parchment);
+            border: 15px solid #3d2b1f;
+            padding: 25px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* --- CENTERED HEADING --- */
+        h1 {
+            text-align: center;
+            margin-top: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 2px solid var(--ink);
+            padding-bottom: 10px;
+        }
+
+        /* --- 10x10 BATTLEFIELD GRID --- */
+        #battlefield {
+            display: grid;
+            grid-template-columns: 40px repeat(10, 45px);
+            grid-template-rows: repeat(10, 45px) 40px;
+            gap: 2px;
+            background: var(--ink);
+            border: 5px solid #3d2b1f;
+            margin: 0 auto;
+            width: fit-content;
+        }
+
+        .cell {
+            width: 45px; height: 45px;
+            background: var(--sea);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem; transition: background 0.3s;
+        }
+
+        .label { background: #d4c4a8; font-weight: bold; font-size: 0.8rem; }
+
+        .stats-bar {
+            display: flex; justify-content: space-around;
+            font-size: 1.5rem; font-weight: bold;
+            color: var(--blood); padding-bottom: 5px;
+        }
+
+        #radar-display {
+            background: #000; color: #00ff00;
+            padding: 10px; font-family: monospace; font-size: 1.2rem;
+            border: 3px ridge #8b4513; text-align: center; flex-grow: 1;
+        }
+
+        .controls { display: flex; justify-content: center; gap: 10px; margin-top: 10px; }
+
+        input {
+            padding: 10px; border: 2px solid var(--ink); background: transparent;
+            width: 90px; text-align: center; font-family: inherit; font-size: 1rem;
+        }
+
+        button {
+            padding: 10px 20px; background: var(--ink); color: var(--parchment);
+            border: 3px ridge #8b4513; cursor: pointer; font-family: inherit;
+            text-transform: uppercase; font-weight: bold;
+        }
+
+        button:hover { background: var(--blood); }
+        .miss { background: #444 !important; opacity: 0.7; }
+        .hit { background: var(--blood) !important; color: gold; box-shadow: inset 0 0 10px #000; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="battle-ui">
+        <h1>⚔️ BATTLE OF THE 10 SEAS ⚔️</h1>
+        
+        <div class="stats-bar">
+            <span>❤️ HP: <span id="hp">100</span></span>
+            <span>💣 AMMO: <span id="ammo">25</span></span>
+            <span>🚩 TARGETS: <span id="enemies">5</span></span>
+        </div>
+
+        <div id="battlefield"></div>
+
+        <div style="display: flex; gap: 10px; align-items: center; margin-top: 10px;">
+            <div id="radar-display">RADAR: [OFFLINE]</div>
+            <button onclick="pingRadar()">PING RADAR (-1 AMMO)</button>
+        </div>
+
+        <div style="font-size: 0.85rem; text-align: center; margin: 10px 0; color: #555;">
+            <b>Shield Logic:</b> $Freq = ((Latitude \times 7) + (Enemies\_Left \times 3)) \pmod{10}$
+        </div>
+
+        <div class="controls">
+            <input type="number" id="lat-in" placeholder="Lat 0-9">
+            <input type="number" id="freq-in" placeholder="Freq">
+            <button onclick="fireCannon()">FIRE!</button>
+        </div>
+
+        <p id="feedback" style="text-align: center; font-weight: bold; margin-top: 15px;"></p>
+    </div>
+
+    <div id="leaderboard-ui" class="hidden">
+        <h1>📜 THE CAPTAIN'S LOG</h1>
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="border-bottom: 2px solid var(--ink);">
+                    <th>PIRATE</th><th>HP</th><th>AMMO</th><th>PLUNDER</th>
+                </tr>
+            </thead>
+            <tbody id="board-body" style="text-align: center;"></tbody>
+        </table>
+        <br>
+        <button onclick="location.reload()" style="display: block; margin: auto;">NEW VOYAGE</button>
+    </div>
+</div>
+
+<script>
+    console.log("%c SECRET CAMPUS CARGO: U3RlcCBwYXN0IHRoZSBpcm9uIGdhdGVzIHdoZXJlIHRoZSBzdG9uZSBzY2hvbGFycyBzaWxlbnQgc3RhbmQsClNlZWsgdGhlIGZvdW50YWluIG9mIHdpc2RvbSBpbiB0aGUgY2VudGVyIG9mIHRoZSBsYW5kLgpUcmVhZCB0aGUgZHVzdHkgcGF0aHMgd2hlcmUgdGhlIHNoYWRvd3Mgb2YgdGhlIGFyY2hlcyBmYWxsLApCdXQgdGhlIHRyZWFzdXJlIGlzbid0IGJ1cmllZCBuZWFyIHRoZSBjaGFwZWwgb3IgdGhlIGhhbGwuCkZvbGxvdyB0aGUgaW52aXNpYmxlIGN1cnJlbnQgdGhyb3VnaCB0aGUgd2FsbHMgb2YgYnJpY2sgYW5kIGxpbWUsClRvIHRoZSBjb2xkLCBodW1taW5nIGhlYXJ0IHRoYXQgZXhpc3RzIG91dHNpZGUgb2YgdGltZS4KQSBmb3Jlc3Qgb2YgYmxhY2sgdG93ZXJzIHdpdGggZnJ1aXQgb2YgbGlxdWlkIGxpZ2h0LApXaGVyZSB0aGUgZnJvc3Qgb2YgdGhlIHdpbnRlciByZWF0aCBibG93cyBpbiBkYXkgYW5kIG5pZ2h0LgpUaGUgYW5jaG9yIGlzIGF0IHlvdXIgZmluZ2VydGlwcywgdGhlIG1hcCBpcyBpbiB5b3VyIGV5ZSwKWW91J3ZlIGZvdW5kIHRoZSBTZWNyZXQgQXJlbmEgYmVuZWF0aCBhIHNpbGljb24gc2t5Lg==", "color: gold; background: black; font-size: 14px; padding: 10px; border: 2px solid gold;");
+
+    let hp = 100; //
+    let ammo = 25; //
+    let enemies = 5; //
+    let enemyLats = [];
+
+    function randomizeShips() {
+        const lats = [];
+        while(lats.length < 5) {
+            let r = Math.floor(Math.random() * 10);
+            if(!lats.includes(r)) lats.push(r);
+        }
+        return lats.sort((a, b) => a - b);
+    }
+    
+    function createGrid() {
+        const board = document.getElementById('battlefield');
+        for (let r = 0; r <= 10; r++) {
+            for (let c = 0; c <= 10; c++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                if (r < 10 && c === 0) {
+                    cell.innerText = 9 - r;
+                    cell.classList.add('label');
+                } else if (r === 10 && c > 0) {
+                    cell.innerText = c - 1;
+                    cell.classList.add('label');
+                } else if (r === 10 && c === 0) {
+                    cell.innerText = "L/C";
+                    cell.classList.add('label');
+                } else if (r < 10 && c > 0) {
+                    cell.id = `cell-${9-r}-${c-1}`;
+                }
+                board.appendChild(cell);
+            }
+        }
+    }
+
+    function pingRadar() {
+        if (ammo <= 0) return;
+        ammo--; //
+        const target = enemyLats[5 - enemies];
+        document.getElementById('radar-display').innerText = "DATA (B64): " + btoa(target.toString()); //
+        updateUI();
+    }
+
+    function fireCannon() {
+        const uLat = parseInt(document.getElementById('lat-in').value);
+        const uFreq = parseInt(document.getElementById('freq-in').value);
+        const fb = document.getElementById('feedback');
+        
+        if (isNaN(uLat) || isNaN(uFreq) || uLat < 0 || uLat > 9) {
+            alert("Captain, coordinates must be between 0 and 9!");
+            return;
+        }
+
+        ammo--; 
+        const actualLat = enemyLats[5 - enemies];
+        const correctFreq = ((actualLat * 7) + (enemies * 3)) % 10;
+        
+        const col = Math.floor(Math.random() * 10); 
+        const cell = document.getElementById(`cell-${uLat}-${col}`);
+
+        if (uLat === actualLat && uFreq === correctFreq) {
+            enemies--;
+            cell.innerText = "💥";
+            cell.classList.add('hit');
+            fb.innerText = "DIRECT HIT! TARGET SCUTTLED!";
+            fb.style.color = "green";
+        } else {
+            hp -= 20; //
+            cell.innerText = "🌊";
+            cell.classList.add('miss');
+            fb.style.color = "red";
+            
+            //
+            if (uLat < actualLat) {
+                fb.innerText = "🌊 MISS! SHOT TOO FAR SOUTH (Lat < Target)!";
+            } else if (uLat > actualLat) {
+                fb.innerText = "🌊 MISS! SHOT TOO FAR NORTH (Lat > Target)!";
+            } else {
+                fb.innerText = "🌊 LATITUDE REACHED, BUT SHIELD FREQUENCY MISMATCH!";
+            }
+        }
+
+        updateUI();
+        if (enemies === 0) endGame(true);
+        else if (hp <= 0 || ammo <= 0) endGame(false);
+    }
+
+    function updateUI() {
+        document.getElementById('hp').innerText = hp;
+        document.getElementById('ammo').innerText = ammo;
+        document.getElementById('enemies').innerText = enemies;
+    }
+
+    function endGame(victory) {
+        document.getElementById('battle-ui').classList.add('hidden');
+        document.getElementById('leaderboard-ui').classList.remove('hidden');
+        if (victory) {
+            const score = (hp * 10) + (ammo * 50); //
+            const name = prompt("Enter your name for the Captain's Log:");
+            document.getElementById('board-body').innerHTML += `<tr><td>${name||'Pirate'}</td><td>${hp}</td><td>${ammo}</td><td><strong>${score} Gold</strong></td></tr>`;
+        } else {
+            alert("☠️ DEFEAT! Your ship sinks to the depths.");
+        }
+    }
+
+    enemyLats = randomizeShips();
+    createGrid();
+</script>
+
+</body>
+</html>

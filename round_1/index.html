@@ -1,0 +1,234 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Level 1: The Independent Cursed Chart</title>
+    <style>
+        :root {
+            --parchment: #f4e4bc;
+            --ink: #2c1a0b;
+            --blood: #8b0000;
+            --seaweed: rgba(34, 139, 34, 0.6);
+            --map-url: url('map.jpeg'); 
+        }
+
+        body {
+            background-color: #1a120b;
+            background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Papyrus', 'Georgia', serif;
+            color: var(--ink);
+            overflow: hidden;
+        }
+
+        .main-title {
+            color: var(--parchment);
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px #000;
+            z-index: 2500;
+            text-transform: uppercase;
+        }
+
+        #map-wrapper {
+            position: relative;
+            width: 75vh; 
+            height: 75vh;
+            background: var(--map-url) no-repeat center;
+            background-size: cover;
+            border: 15px solid #3d2b1f;
+            box-shadow: 0 0 50px rgba(0,0,0,0.9);
+            z-index: 100;
+        }
+
+        
+        #pseudo-trap::after {
+            content: "\0041"; 
+            position: absolute; top: 20%; left: 20%;
+            font-size: 60px; color: var(--blood);
+            opacity: 0; 
+        }
+
+        #seaweed-layer {
+            position: absolute; bottom: 20%; left: 20%;
+            width: 100px; height: 100px;
+            background: var(--seaweed);
+            z-index: 150;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        }
+
+        #honeypot-veil {
+            position: absolute; width: 100%; height: 100%;
+            z-index: 200;
+            background: rgba(139, 0, 0, 0.05); 
+        }
+
+        #treasure-x {
+            position: absolute;
+            color: var(--blood);
+            font-size: 80px; font-weight: bold;
+            opacity: 0; 
+            z-index: 50;
+            transform: translate(-50%, -50%);
+        }
+
+        #submit-btn {
+            position: absolute;
+            padding: 10px 20px;
+            background: var(--ink);
+            color: var(--parchment);
+            border: 2px solid #8b4513;
+            z-index: 5000;
+            cursor: pointer;
+            display: none; 
+        }
+
+        .log-panel {
+            position: absolute; bottom: 10px; right: 10px;
+            background: rgba(44, 27, 14, 0.95);
+            color: #e0c9a6; padding: 15px;
+            border: 2px solid #8b4513; font-size: 1rem;
+            width: 320px; z-index: 2000;
+        }
+
+        .status-msg {
+            color: #00ff00; font-weight: bold; margin-top: 10px;
+            text-align: center; border: 1px dashed #00ff00; padding: 5px;
+        }
+
+        .reset-btn {
+            position: fixed; bottom: 10px; left: 10px;
+            background: #444; color: #999; border: none; padding: 5px;
+            cursor: pointer; font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1 class="main-title">The Cursed Chart</h1>
+
+    <div id="map-wrapper">
+        <div id="honeypot-veil"></div>
+        <div id="pseudo-trap"></div>
+        <div id="seaweed-layer"></div>
+        <div id="treasure-x">X</div>
+
+        <div class="log-panel">
+            <b>📜 CURRENT ASSIGNMENT:</b>
+            <div id="task-desc" style="margin: 10px 0; min-height: 50px; font-style: italic;">Loading...</div>
+            
+            <div style="border-top: 1px solid #555; padding-top: 5px;">
+                <b>SALVAGED ADDR:</b> [<span id="keys-logged" style="color: gold;">-</span>]
+            </div>
+
+            <div id="refresh-notice" class="status-msg" style="display:none;">
+                LOG SECURED! REFRESH TO SEEK THE NEXT.
+            </div>
+        </div>
+    </div>
+
+    <button id="submit-btn">CATCH KRAKEN</button>
+    <button class="reset-btn" onclick="localStorage.clear(); location.reload();">RESET CONTEST</button>
+
+<script>
+    const allTasks = [
+        { id: '577261697468', desc: "Find the Ghost in the Captain's Siren Shed (Opacity curse)." },
+        { id: '4c657669617468616e', desc: "The Kraken button has surfaced. Catch it to claim the Log!" },
+        { id: '466c6f7261', desc: "The Ship is stuck on some seaweeds. Clear them (DOM removal)." },
+        { id: '5368726f7564', desc: "The 'honeypot-veil' clouds your vision. Dissolve the element." },
+        { id: '476c696e74', desc: "Find the hidden 'treasure-x' and give it Sight (Opacity curse)." }
+    ];
+
+    let foundKeyIds = JSON.parse(localStorage.getItem('foundHexIds') || "[]");
+    let activeTask = null;
+    let sessionLocked = false;
+
+    function decodeHex(hex) {
+        let str = '';
+        for (let i = 0; i < hex.length; i += 2) {
+            str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+        }
+        return str;
+    }
+
+    function init() {
+        const availableTasks = allTasks.filter(t => !foundKeyIds.includes(t.id));
+        
+        if (availableTasks.length === 0) {
+            const cipher = "414c474f53"; 
+            document.getElementById('task-desc').innerHTML = `<b>ALL CURSES LIFTED!</b><br>FINAL CODE: <span style='color:red'>${decodeHex(cipher)}</span>`;
+        } else {
+            activeTask = availableTasks[Math.floor(Math.random() * availableTasks.length)];
+            document.getElementById('task-desc').innerText = activeTask.desc;
+            
+            if (activeTask.id === '4c657669617468616e') setupKraken();
+        }
+
+        document.getElementById('keys-logged').innerText = foundKeyIds.length ? foundKeyIds.join(", ") : "NONE";
+        
+        setupX();
+        startObserver();
+    }
+
+    function setupX() {
+        const xMark = document.getElementById('treasure-x');
+        xMark.style.left = (Math.random() * 70 + 15) + "%";
+        xMark.style.top = (Math.random() * 70 + 15) + "%";
+    }
+
+    function setupKraken() {
+        const btn = document.getElementById('submit-btn');
+        btn.style.display = 'block';
+        setInterval(() => {
+            if (sessionLocked) return;
+            btn.style.left = Math.random() * 80 + 'vw';
+            btn.style.top = Math.random() * 80 + 'vh';
+        }, 300);
+        btn.onclick = () => { if(!sessionLocked) completeTask('4c657669617468616e'); };
+    }
+
+    function startObserver() {
+        setInterval(() => {
+            if (sessionLocked || !activeTask) return;
+
+            let solved = false;
+            switch(activeTask.id) {
+                case '577261697468':
+                    const opA = window.getComputedStyle(document.getElementById('pseudo-trap'), '::after').getPropertyValue('opacity');
+                    if (parseFloat(opA) >= 1) solved = true;
+                    break;
+                case '466c6f7261':
+                    if (!document.getElementById('seaweed-layer')) solved = true;
+                    break;
+                case '5368726f7564':
+                    if (!document.getElementById('honeypot-veil')) solved = true;
+                    break;
+                case '476c696e74':
+                    const opS = window.getComputedStyle(document.getElementById('treasure-x')).getPropertyValue('opacity');
+                    if (parseFloat(opS) >= 1) solved = true;
+                    break;
+            }
+            if (solved) completeTask(activeTask.id);
+        }, 1000);
+    }
+
+    function completeTask(id) {
+        sessionLocked = true;
+        foundKeyIds.push(id);
+        localStorage.setItem('foundHexIds', JSON.stringify(foundKeyIds));
+        document.getElementById('refresh-notice').style.display = 'block';
+        alert(`Memory Address '${id}' Deciphered!`);
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
+

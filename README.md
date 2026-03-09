@@ -69,9 +69,9 @@ The winner was determined by **the team that solved the final clue first and ide
 
 Our team successfully completed all stages of the event and secured **Second Prize** in the competition.
 
-
 ## Team Members
 
-- Sarvan Kumar (@sarvan-2187)
-- Rohith Subramanian Nithyadevi
+- Sarvan Kumar ([GitHub](https://github.com/sarvan-2187))
+- Rohith Subramanian Nithyadevi ([GitHub](https://github.com/rohit-username))
+
 

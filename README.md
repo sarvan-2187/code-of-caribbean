@@ -71,7 +71,8 @@ Our team successfully completed all stages of the event and secured **Second Pri
 
 ## Team Members
 
-- Sarvan Kumar ([GitHub](https://github.com/sarvan-2187))
-- Rohith Subramanian Nithyadevi ([GitHub](https://github.com/rohit-username))
+- ([Sarvan Kumar](https://github.com/sarvan-2187))
+- ([Rohith Subramanian Nithyadevi](https://github.com/Rohith-Subramanian-Nithyadevi))
+
 
 

@@ -1,6 +1,4 @@
-# Code of Caribbean
-
-## Second Prize Winner
+# Code of Caribbean - Second Prize Winner
 
 **Code of Caribbean** was a multi-round technical treasure hunt and coding challenge that tested logical reasoning, problem-solving ability, and strategic thinking. Our team successfully progressed through all rounds and secured **Second Prize** in the competition.
 
@@ -73,6 +71,7 @@ Our team successfully completed all stages of the event and secured **Second Pri
 
 - [Sarvan Kumar](https://github.com/sarvan-2187)
 - [Rohith Subramanian Nithyadevi](https://github.com/Rohith-Subramanian-Nithyadevi)
+
 
 
 

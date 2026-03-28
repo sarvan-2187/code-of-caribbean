@@ -1,5 +1,7 @@
 # Code of Caribbean - Second Prize Winner
 
+![1773407535886](https://github.com/user-attachments/assets/de155aa5-227b-4090-9874-f3ed8e33ba75)
+
 **Code of Caribbean** was a multi-round technical treasure hunt and coding challenge that tested logical reasoning, problem-solving ability, and strategic thinking. Our team successfully progressed through all rounds and secured **Second Prize** in the competition.
 
 ## Competition Structure
